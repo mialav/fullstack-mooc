@@ -24,6 +24,8 @@ const App = props => {
       .map(parseFloat)
   );
   const randomAnecdote = () => Math.floor(Math.random() * anecdotes.length);
+  const mostPoints = () => Math.max([...points]);
+  console.log(mostPoints);
 
   const vote = selected => {
     const pointsCopy = [...points];
