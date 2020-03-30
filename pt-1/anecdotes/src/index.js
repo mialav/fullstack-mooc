@@ -24,7 +24,7 @@ const App = props => {
       .map(parseFloat)
   );
   const randomAnecdote = () => Math.floor(Math.random() * anecdotes.length);
-  const mostPoints = () => Math.max([...points]);
+  const mostPoints = points.indexOf(Math.max(...points));
   console.log(mostPoints);
 
   const vote = selected => {
@@ -39,6 +39,7 @@ const App = props => {
 
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <Anecdote anectodes={anecdotes} selected={selected} points={points} />
       <Button
         text="next anecdote"
@@ -54,6 +55,9 @@ const App = props => {
           vote(selected);
         }}
       />
+
+      <h2>Anecdote with most votes</h2>
+      <Anecdote anecdotes={anecdotes} selected={mostPoints} points={points} />
     </div>
   );
 };
