@@ -3,12 +3,15 @@ import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterInput, setFilter] = useState("");
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState("notification");
 
   useEffect(() => {
     personService.getAll().then(initialPersons => {
@@ -27,6 +30,10 @@ const App = () => {
           setPersons(persons.concat(returnedPerson));
           setNewName("");
           setNewNumber("");
+          setNotification(`${returnedPerson.name} was added`);
+          setTimeout(() => {
+            setNotification(null);
+          }, 3000);
         });
   };
 
@@ -46,9 +53,18 @@ const App = () => {
           );
           setNewName("");
           setNewNumber("");
+          setNotification(`${returnedPerson.name} was updated`);
+          setTimeout(() => {
+            setNotification(null);
+          }, 3000);
         })
         .catch(error => {
-          alert(`the person '${person.name}' was already deleted from server`);
+          setNotificationType("error");
+          setNotification(`${person.name} was already deleted`);
+          setTimeout(() => {
+            setNotification(null);
+            setNotificationType("notification");
+          }, 3000);
           setPersons(
             persons.filter(p => p.name.toLowerCase() !== name.toLowerCase())
           );
@@ -72,7 +88,8 @@ const App = () => {
   };
 
   const handleDelete = id => {
-    if (window.confirm(`Delete person number ${id}`)) {
+    const person = persons.find(p => p.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
       personService.remove(id).then(() =>
         personService.getAll().then(initialPersons => {
           setPersons(initialPersons);
@@ -90,7 +107,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={notification} type={notificationType} />
       <Filter value={filterInput} handleFilter={handleFilter} />
 
       <h3>Add new person</h3>
